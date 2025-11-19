@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Catch 41</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div id="app" class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center mb-4">Catch 41 - Test</h1>
+        
+        <!-- Start Modal -->
+        <div id="startModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-lg max-w-sm w-full">
+                <h2 class="text-xl font-bold mb-4">Start Game</h2>
+                <input id="playerName" type="text" value="Guest" placeholder="Player Name" class="w-full p-2 border rounded mb-4">
+                <button id="startBtn" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Start Game</button>
+            </div>
+        </div>
+        
+        <!-- Game Area -->
+        <div id="gameArea" class="hidden">
+            <div class="text-center mb-4">
+                <div id="currentOut" class="text-4xl font-bold text-blue-600">61</div>
+                <div id="score" class="text-lg">Score: <span id="scoreValue">0</span></div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <button class="dart-btn bg-green-500 text-white p-3 rounded hover:bg-green-600" data-darts="2">2 Darts</button>
+                <button class="dart-btn bg-yellow-500 text-white p-3 rounded hover:bg-yellow-600" data-darts="3">3 Darts</button>
+                <button class="dart-btn bg-orange-500 text-white p-3 rounded hover:bg-orange-600" data-darts="4">4+ Darts</button>
+                <button class="dart-btn bg-red-500 text-white p-3 rounded hover:bg-red-600" data-darts="0">Miss</button>
+            </div>
+            
+            <button id="resetBtn" class="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600">Reset Game</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('Script loading...');
+        
+        // Game state
+        let gameState = {
+            currentOut: 61,
+            score: 0,
+            playerName: 'Guest'
+        };
+        
+        // DOM elements
+        let startModal, gameArea, startBtn, playerNameInput, currentOutEl, scoreEl, resetBtn, dartBtns;
+        
+        function initElements() {
+            console.log('Initializing elements...');
+            startModal = document.getElementById('startModal');
+            gameArea = document.getElementById('gameArea');
+            startBtn = document.getElementById('startBtn');
+            playerNameInput = document.getElementById('playerName');
+            currentOutEl = document.getElementById('currentOut');
+            scoreEl = document.getElementById('scoreValue');
+            resetBtn = document.getElementById('resetBtn');
+            dartBtns = document.querySelectorAll('.dart-btn');
+            
+            console.log('Elements found:', {
+                startModal: !!startModal,
+                gameArea: !!gameArea,
+                startBtn: !!startBtn,
+                playerNameInput: !!playerNameInput,
+                dartBtns: dartBtns.length
+            });
+        }
+        
+        function attachListeners() {
+            console.log('Attaching listeners...');
+            
+            if (startBtn) {
+                startBtn.addEventListener('click', startGame);
+                console.log('Start button listener attached');
+            }
+            
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetGame);
+                console.log('Reset button listener attached');
+            }
+            
+            dartBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const darts = parseInt(e.target.getAttribute('data-darts'));
+                    recordFinish(darts);
+                });
+            });
+            console.log('Dart button listeners attached:', dartBtns.length);
+        }
+        
+        function startGame() {
+            console.log('Starting game...');
+            gameState.playerName = playerNameInput.value || 'Guest';
+            startModal.style.display = 'none';
+            gameArea.classList.remove('hidden');
+            updateDisplay();
+        }
+        
+        function resetGame() {
+            console.log('Resetting game...');
+            gameState.currentOut = 61;
+            gameState.score = 0;
+            startModal.style.display = 'flex';
+            gameArea.classList.add('hidden');
+        }
+        
+        function recordFinish(darts) {
+            console.log('Recording finish:', darts, 'darts for out', gameState.currentOut);
+            
+            // Calculate points
+            let points = 0;
+            if (darts === 2) points = 3;
+            else if (darts === 3) points = 2;
+            else if (darts >= 4 && darts <= 6) points = 1;
+            
+            gameState.score += points;
+            gameState.currentOut++;
+            
+            if (gameState.currentOut > 100) {
+                alert('Game Complete! Final Score: ' + gameState.score);
+                resetGame();
+                return;
+            }
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            console.log('Updating display...');
+            if (currentOutEl) currentOutEl.textContent = gameState.currentOut;
+            if (scoreEl) scoreEl.textContent = gameState.score;
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            initElements();
+            attachListeners();
+            updateDisplay();
+        });
+        
+        // Backup initialization
+        window.addEventListener('load', function() {
+            console.log('Window loaded');
+            if (!startBtn) {
+                console.log('Elements not found, re-initializing...');
+                initElements();
+                attachListeners();
+                updateDisplay();
+            }
+        });
+        
+        console.log('Script loaded successfully');
+    </script>
+</body>
+</html>

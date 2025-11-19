@@ -1,54 +1,65 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch 41 (2-Dart out Practice)</title>
-    <!-- Load Tailwind CSS -->
+    <title>CGC's Catch 41 - Dart Practice App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        html {
+            scrollbar-gutter: stable;
+            overflow-y: scroll;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-        /* Custom class for the quick input buttons */
+        
+        #welcomeModal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 40 !important;
+        }
+        
+        #welcomeModal > div {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+        
         .darts-key-btn {
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 1rem; /* text-base */
+            font-size: 1rem;
             padding: 0.75rem 1rem;
-            border-radius: 0.75rem; /* rounded-xl */
+            border-radius: 0.75rem;
             box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
             transform: scale(1);
             border: 2px solid transparent;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
-        .darts-key-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .darts-key-btn:hover::before {
-            left: 100%;
-        }
+        
         .darts-key-btn:hover {
             transform: scale(1.05) translateY(-2px);
             box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.3), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
         }
+        
         .darts-key-btn:active {
             transform: scale(0.95);
             box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.2);
         }
+        
         .tab-button {
             flex-grow: 1;
             padding: 0.5rem 1rem;
@@ -58,120 +69,126 @@
             transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
+        
         .tab-button:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-
-        /* --- Tooltip Styles for Keyboard Hint --- */
-        .tooltip-container {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-        }
-        .tooltip-text {
-            visibility: hidden;
-            width: 220px;
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-            color: #fff;
-            text-align: center;
-            border-radius: 0.75rem;
-            padding: 12px 16px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%; 
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            font-size: 0.875rem;
-            font-weight: 500;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            white-space: nowrap;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        /* Show tooltip on hover/focus */
-        .tooltip-container:hover .tooltip-text,
-        .tooltip-container:focus-within .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        /* Arrow for the tooltip */
-        .tooltip-text::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: #1f2937 transparent transparent transparent;
-        }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-0{bottom:0px}.left-0{left:0px}.right-0{right:0px}.right-1\/4{right:25%}.top-0{top:0px}.top-1\/2{top:50%}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-6{margin-left:1.5rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-screen{height:100vh}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-full{height:100%}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-20{width:5rem}.w-24{width:6rem}.w-3{width:0.75rem}.w-5{width:1.25rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-6{--tw-translate-x:-1.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-8{--tw-translate-y:-2rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-8{--tw-translate-x:2rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-6{--tw-translate-y:1.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-help{cursor:help}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l-4{border-left-width:4px}.border-amber-200\/50{border-color:rgb(253 230 138 / 0.5)}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-amber-300\/30{border-color:rgb(252 211 77 / 0.3)}.border-amber-400{--tw-border-opacity:1;border-color:rgb(251 191 36 / var(--tw-border-opacity, 1))}.border-blue-200\/50{border-color:rgb(191 219 254 / 0.5)}.border-blue-400{--tw-border-opacity:1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.border-blue-400\/30{border-color:rgb(96 165 250 / 0.3)}.border-emerald-200\/50{border-color:rgb(167 243 208 / 0.5)}.border-emerald-400{--tw-border-opacity:1;border-color:rgb(52 211 153 / var(--tw-border-opacity, 1))}.border-emerald-400\/30{border-color:rgb(52 211 153 / 0.3)}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-200\/50{border-color:rgb(229 231 235 / 0.5)}.border-gray-300\/30{border-color:rgb(209 213 219 / 0.3)}.border-indigo-400\/30{border-color:rgb(129 140 248 / 0.3)}.border-indigo-600{--tw-border-opacity:1;border-color:rgb(79 70 229 / var(--tw-border-opacity, 1))}.border-red-400{--tw-border-opacity:1;border-color:rgb(248 113 113 / var(--tw-border-opacity, 1))}.border-red-400\/30{border-color:rgb(248 113 113 / 0.3)}.border-transparent{border-color:transparent}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.border-white\/30{border-color:rgb(255 255 255 / 0.3)}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-indigo-50\/50{background-color:rgb(238 242 255 / 0.5)}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-white\/20{background-color:rgb(255 255 255 / 0.2)}.bg-white\/5{background-color:rgb(255 255 255 / 0.05)}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-amber-400{--tw-gradient-from:#fbbf24 var(--tw-gradient-from-position);--tw-gradient-to:rgb(251 191 36 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-amber-50{--tw-gradient-from:#fffbeb var(--tw-gradient-from-position);--tw-gradient-to:rgb(255 251 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-50{--tw-gradient-from:#eff6ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-600\/20{--tw-gradient-from:rgb(37 99 235 / 0.2) var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-400{--tw-gradient-from:#34d399 var(--tw-gradient-from-position);--tw-gradient-to:rgb(52 211 153 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#ecfdf5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-600{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-100{--tw-gradient-from:#f3f4f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(243 244 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-400{--tw-gradient-from:#9ca3af var(--tw-gradient-from-position);--tw-gradient-to:rgb(156 163 175 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-50{--tw-gradient-from:#f9fafb var(--tw-gradient-from-position);--tw-gradient-to:rgb(249 250 251 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-400{--tw-gradient-from:#818cf8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(129 140 248 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-500{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-400{--tw-gradient-from:#f87171 var(--tw-gradient-from-position);--tw-gradient-to:rgb(248 113 113 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-50{--tw-gradient-from:#fef2f2 var(--tw-gradient-from-position);--tw-gradient-to:rgb(254 242 242 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-500{--tw-gradient-from:#ef4444 var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 68 68 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-white{--tw-gradient-from:#fff var(--tw-gradient-from-position);--tw-gradient-to:rgb(255 255 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-yellow-50{--tw-gradient-from:#fefce8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(254 252 232 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-purple-600{--tw-gradient-to:rgb(147 51 234 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #9333ea var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-amber-100{--tw-gradient-to:#fef3c7 var(--tw-gradient-to-position)}.to-amber-500{--tw-gradient-to:#f59e0b var(--tw-gradient-to-position)}.to-blue-600{--tw-gradient-to:#2563eb var(--tw-gradient-to-position)}.to-emerald-600{--tw-gradient-to:#059669 var(--tw-gradient-to-position)}.to-gray-50{--tw-gradient-to:#f9fafb var(--tw-gradient-to-position)}.to-gray-50\/50{--tw-gradient-to:rgb(249 250 251 / 0.5) var(--tw-gradient-to-position)}.to-gray-500{--tw-gradient-to:#6b7280 var(--tw-gradient-to-position)}.to-green-100{--tw-gradient-to:#dcfce7 var(--tw-gradient-to-position)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-green-500{--tw-gradient-to:#22c55e var(--tw-gradient-to-position)}.to-green-700{--tw-gradient-to:#15803d var(--tw-gradient-to-position)}.to-indigo-100{--tw-gradient-to:#e0e7ff var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-indigo-700{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.to-indigo-800{--tw-gradient-to:#3730a3 var(--tw-gradient-to-position)}.to-pink-50{--tw-gradient-to:#fdf2f8 var(--tw-gradient-to-position)}.to-purple-400{--tw-gradient-to:#c084fc var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.to-purple-600\/20{--tw-gradient-to:rgb(147 51 234 / 0.2) var(--tw-gradient-to-position)}.to-red-500{--tw-gradient-to:#ef4444 var(--tw-gradient-to-position)}.to-red-600{--tw-gradient-to:#dc2626 var(--tw-gradient-to-position)}.to-white{--tw-gradient-to:#fff var(--tw-gradient-to-position)}.to-yellow-50{--tw-gradient-to:#fefce8 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-2{padding-bottom:0.5rem}.pt-16{padding-top:4rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-100{--tw-text-opacity:1;color:rgb(224 231 255 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.opacity-90{opacity:0.9}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.drop-shadow-lg{--tw-drop-shadow:drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-sm{--tw-drop-shadow:drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:scale-\[1\.02\]:hover{--tw-scale-x:1.02;--tw-scale-y:1.02;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50\/50:hover{background-color:rgb(249 250 251 / 0.5)}.hover\:bg-white\/30:hover{background-color:rgb(255 255 255 / 0.3)}.hover\:from-amber-500:hover{--tw-gradient-from:#f59e0b var(--tw-gradient-from-position);--tw-gradient-to:rgb(245 158 11 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-blue-600:hover{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-emerald-600:hover{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-gray-500:hover{--tw-gradient-from:#6b7280 var(--tw-gradient-from-position);--tw-gradient-to:rgb(107 114 128 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-indigo-600:hover{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-red-600:hover{--tw-gradient-from:#dc2626 var(--tw-gradient-from-position);--tw-gradient-to:rgb(220 38 38 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-amber-600:hover{--tw-gradient-to:#d97706 var(--tw-gradient-to-position)}.hover\:to-blue-700:hover{--tw-gradient-to:#1d4ed8 var(--tw-gradient-to-position)}.hover\:to-emerald-700:hover{--tw-gradient-to:#047857 var(--tw-gradient-to-position)}.hover\:to-gray-600:hover{--tw-gradient-to:#4b5563 var(--tw-gradient-to-position)}.hover\:to-indigo-700:hover{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.hover\:to-red-700:hover{--tw-gradient-to:#b91c1c var(--tw-gradient-to-position)}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-amber-400:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(251 191 36 / var(--tw-ring-opacity, 1))}.active\:scale-\[0\.98\]:active{--tw-scale-x:0.98;--tw-scale-y:0.98;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:0.5}@media (min-width: 640px){.sm\:max-w-lg{max-width:32rem}.sm\:flex-row{flex-direction:row}.sm\:p-10{padding:2.5rem}.sm\:p-3{padding:0.75rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:right-\[30\%\]{right:30%}.md\:p-2{padding:0.5rem}}</style></head>
+</head>
 <body class="h-screen p-1 md:p-2 overflow-hidden">
-    <div id="app" class="h-full max-w-md sm:max-w-lg mx-auto w-full bg-white/95 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/20 flex flex-col">
 
-                <!-- Start Prompt Modal (Game Mode & Sign-in/Guest) -->
-                <div id="startPromptModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-16">
-                    <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/20">
-                        <div class="mb-6">
-                              <img src="catch40applogo.png" alt="App Logo" class="mx-auto mb-4 w-64 h-36 rounded-2xl shadow-2xl object-cover border-4 border-indigo-400" style="aspect-ratio:16/9;" loading="eager">
-                              <img src="CGC official logo-1.png" alt="CGC Official Logo" class="mx-auto mb-4 w-32 h-32 rounded-2xl shadow-2xl object-cover border-4 border-amber-400" loading="eager">
-                            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Welcome to CGC's Catch 41</h2>
-                            <p class="text-gray-700 mb-4">Select your game mode and sign in to track your score!</p>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block font-bold text-gray-800 mb-2">Game Mode</label>
-                            <div class="flex justify-center gap-4 mb-2">
-                                <button id="mode1Btn" class="px-4 py-2 rounded-lg font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow hover:from-indigo-600 hover:to-purple-700 transition">1 Player</button>
-                                <button id="mode2Btn" class="px-4 py-2 rounded-lg font-bold bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow hover:from-emerald-600 hover:to-green-700 transition">2 Player</button>
-                            </div>
-                        </div>
-                        <div id="playerInputs" class="mb-4">
-                            <label class="block font-bold text-gray-800 mb-2">Player Name(s)</label>
-                            <div id="player1InputWrap" class="mb-2 flex gap-2 items-center justify-center">
-                                <input id="player1NameInput" type="text" maxlength="32" placeholder="Player 1 Name" class="px-3 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 flex-1">
-                                <button id="player1GuestBtn" class="px-2 py-1 text-xs bg-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-300 transition">Guest</button>
-                            </div>
-                            <div id="player2InputWrap" class="mb-2 flex gap-2 items-center justify-center hidden">
-                                <input id="player2NameInput" type="text" maxlength="32" placeholder="Player 2 Name" class="px-3 py-2 rounded-lg border border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 flex-1">
-                                <button id="player2GuestBtn" class="px-2 py-1 text-xs bg-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-300 transition">Guest</button>
-                            </div>
-                        </div>
-                        <button id="startGameBtn" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-emerald-500 text-white font-bold rounded-xl shadow-lg hover:from-indigo-600 hover:to-emerald-600 transition duration-200 transform hover:scale-[1.02] border border-indigo-400/30 mt-2">Start Game</button>
+    <!-- Leaderboard Modal (Welcome Page View) -->
+    <div id="leaderboardModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 hidden">
+        <div class="bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-2xl max-w-2xl max-h-[90vh] text-center border border-white/20 w-full overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <img src="CGC official logo-1.png" alt="CGC Official Logo" class="w-12 h-12 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-black text-gray-900 bg-gradient-to-r from-amber-600 to-amber-700 bg-clip-text text-transparent">🏆 Leaderboard</h2>
+                </div>
+                <button id="closeLeaderboardBtn" class="text-gray-600 hover:text-gray-900 text-2xl font-bold transition">✕</button>
+            </div>
+            <div id="welcomeLeaderboardContent" class="w-full">
+                <p class="text-gray-600 font-semibold">Loading leaderboard...</p>
+            </div>
+            <button id="backToWelcomeBtn" class="w-full px-6 py-3 mt-6 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 border border-indigo-400/30 transform hover:scale-[1.02] active:scale-[0.98]">
+                ← Back to Welcome
+            </button>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+        <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20 w-full">
+
+            <!-- Logo Images -->
+            <div class="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
+                <img src="catch40applogo.jpg" alt="Catch 40 Logo" class="w-full max-w-xs sm:max-w-2xl mx-auto rounded-2xl shadow-lg">
+                <img src="CGC official logo-1.png" alt="CGC Official Logo" class="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-2xl shadow-lg">
+            </div>
+            
+            <!-- Title and Description -->
+            <h1 class="text-2xl sm:text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Welcome to CGC's Catch 40
+            </h1>
+            <!-- Game Mode Selection -->
+            <div class="mb-6">
+                <label class="block text-left font-semibold mb-3 text-sm sm:text-base text-gray-800">Choose Game Mode:</label>
+                <div class="flex gap-2 sm:gap-3 justify-center flex-wrap">
+                    <label class="flex items-center gap-2 cursor-pointer p-2 sm:p-3 rounded-lg border-2 border-indigo-300 hover:bg-indigo-50 transition text-sm sm:text-base">
+                        <input type="radio" name="gameMode" value="1" checked class="accent-indigo-600">
+                        <span class="font-medium">1 Player</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 sm:p-3 rounded-lg border-2 border-indigo-300 hover:bg-indigo-50 transition text-sm sm:text-base">
+                        <input type="radio" name="gameMode" value="2" class="accent-indigo-600">
+                        <span class="font-medium">2 Players</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Players Name -->
+            <div class="mb-6">
+                <label class="block text-left font-semibold mb-2 text-sm sm:text-base text-gray-800">Players Name:</label>
+                <p class="text-xs text-gray-600 mb-3">⚠️ If you do not put your personal name, the leaderboard will not keep your score.</p>
+                <div class="space-y-3">
+                    <input id="playerNameInput" type="text" maxlength="32" placeholder="Player 1 name" value="Guest" 
+                           class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-sm sm:text-base">
+                    <div id="player2NameWrapper" class="hidden">
+                        <input id="player2NameInput" type="text" maxlength="32" placeholder="Player 2 name" value="Guest 2" 
+                               class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-sm sm:text-base">
                     </div>
                 </div>
+            </div>
+            
+            <!-- Start Button -->
+            <button id="startGameBtn" 
+                    class="w-full px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 border border-indigo-400/30 transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base">
+                🎯 Start Playing
+            </button>
+            
+            <!-- View Leaderboard Button -->
+            <button id="viewLeaderboardBtn" 
+                    class="w-full px-4 sm:px-6 py-3 sm:py-3 mt-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:from-amber-600 hover:to-amber-700 transition duration-200 border border-amber-400/30 transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base">
+                🏆 View Leaderboard
+            </button>
+            
+            <div id="welcomeError" class="text-red-500 font-bold text-sm mt-3 hidden"></div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="h-full max-w-md sm:max-w-lg mx-auto w-full bg-white/95 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/20 flex flex-col hidden">
         
-        <header class="p-2 sm:p-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 text-white shadow-xl relative overflow-hidden flex-shrink-0">
+        <!-- Header -->
+        <header class="p-1 sm:p-2 md:p-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 text-white shadow-xl relative overflow-hidden flex-shrink-0">
             <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
             <div class="relative z-10">
-                <div class="flex justify-center items-center">
-                    <div class="relative flex justify-center items-center w-full" style="min-height:11rem;">
-                        <img src="CGC official logo-1.png" alt="CGC Watermark" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[14rem] opacity-10 pointer-events-none select-none object-contain z-0" style="aspect-ratio:16/9;" />
-                        <img src="catch40applogo.png" alt="Catch 41 App Logo" class="relative z-10 mx-auto my-4 w-80 h-40 object-contain rounded-2xl shadow-2xl border-4 border-indigo-400 bg-white/80" style="aspect-ratio:16/9;" />
-                    </div>
+                <div class="flex flex-col items-center">
+                    <img src="catch40applogo.jpg" alt="Catch 40 Logo" class="w-full h-auto rounded-lg shadow-lg mb-2">
+                    <span id="currentPlayerDisplay" class="text-xs sm:text-sm font-medium text-indigo-100"></span>
                 </div>
             </div>
             <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
             <div class="absolute bottom-0 left-0 w-12 h-12 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div>
         </header>
 
+        <!-- Tab Navigation -->
         <div id="tabNav" class="flex border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-white flex-shrink-0">
-            <button id="gameTabBtn" class="tab-button py-2 px-3 bg-indigo-50/50 border-indigo-600 text-indigo-700" onclick="switchTab('game')">
+            <button id="gameTabBtn" class="tab-button py-2 sm:py-3 px-2 sm:px-3 bg-indigo-50/50 border-indigo-600 text-indigo-700 text-xs sm:text-sm font-medium sm:font-semibold" onclick="switchTab('game')">
                 🎯 Game
             </button>
-            <button id="leaderboardTabBtn" class="tab-button py-2 px-3 text-yellow-700 hover:bg-yellow-50 border-transparent" onclick="switchTab('leaderboard')">
-                🏆 Leaderboard
-            </button>
-            <button id="rulesTabBtn" class="tab-button py-2 px-3 text-gray-600 hover:bg-gray-50/50 border-transparent" onclick="switchTab('rules')">
+            <button id="rulesTabBtn" class="tab-button py-2 sm:py-3 px-2 sm:px-3 text-gray-600 hover:bg-gray-50/50 border-transparent text-xs sm:text-sm font-medium sm:font-semibold" onclick="switchTab('rules')">
                 📋 How to Play
+            </button>
+            <button id="leaderboardTabBtn" class="tab-button py-2 sm:py-3 px-2 sm:px-3 text-gray-600 hover:bg-gray-50/50 border-transparent text-xs sm:text-sm font-medium sm:font-semibold" onclick="switchTab('leaderboard')">
+                🏆 Leaderboard
             </button>
         </div>
 
-        <div class="p-2 sm:p-3 bg-gradient-to-br from-gray-50 to-white flex-1 overflow-hidden">
+        <!-- Tab Content -->
+        <div class="p-1 sm:p-2 md:p-3 bg-gradient-to-br from-gray-50 to-white flex-1 overflow-hidden">
             
             <!-- GAME TAB CONTENT -->
             <div id="gameTabContent" class="h-full flex flex-col">
@@ -182,25 +199,13 @@
                         🎯 <span>Current Out Target</span>
                     </p>
                     
-                    <!-- Out Display and Info Icon Container -->
-                    <div id="scoreboardContainer" class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-3">
-                        <div id="currentOutWrapper" class="w-full text-center mb-2">
-                            <div id="currentOutDisplay" class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 leading-none drop-shadow-sm">61</div>
-                        </div>
-                        <div id="player1ScoreWrap" class="flex flex-col items-center">
-                            <div id="player1NameDisplay" class="text-xs font-bold text-indigo-700 mb-1"></div>
-                            <div id="player1ScoreSquare" class="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-300 text-4xl sm:text-5xl font-black text-indigo-700 shadow-lg border-2 border-indigo-400 mb-1">0</div>
-                            <div id="player1Progress" class="flex gap-1"></div>
-                        </div>
-                        <div id="player2ScoreWrap" class="flex flex-col items-center hidden">
-                            <div id="player2NameDisplay" class="text-xs font-bold text-emerald-700 mb-1"></div>
-                            <div id="player2ScoreSquare" class="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-300 text-4xl sm:text-5xl font-black text-emerald-700 shadow-lg border-2 border-emerald-400 mb-1">0</div>
-                            <div id="player2Progress" class="flex gap-1"></div>
-                        </div>
+                    <!-- Out Display -->
+                    <div class="flex justify-center items-center gap-2 relative mb-3">
+                         <div id="currentOutDisplay" class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 leading-none drop-shadow-sm">71</div>
                     </div>
                     
                     <!-- Recommended Takeout Display -->
-                    <div id="takeoutDisplay" class="mb-3 p-2 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-200/50 shadow-md" style="display: block;">
+                    <div id="takeoutDisplay" class="mb-3 p-2 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-200/50 shadow-md">
                         <div class="text-center">
                             <p class="text-xs font-bold text-emerald-700 mb-1 flex items-center justify-center gap-1">
                                 🎯 <span>Recommended Takeout</span>
@@ -213,110 +218,107 @@
                     <div id="errorMessage" class="text-red-500 font-bold h-4 text-sm"></div>
                     
                     <!-- Undo and Reset Buttons Container -->
-                    <div class="flex justify-center gap-2 mt-2 mb-3">
-                                                <!-- Return to Main Menu Button -->
-                                                <button id="returnToMenuButton" class="px-2 py-1 text-xs bg-gradient-to-r from-gray-400 to-gray-600 text-white font-bold rounded-lg shadow-lg hover:from-gray-500 hover:to-gray-700 transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-gray-400/30">
-                                                    ⬅ Main Menu
-                                                </button>
-                            <!-- Return to Main Menu Confirmation Modal -->
-                            <div id="returnToMenuModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
-                                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center border-2 border-gray-300">
-                                    <h2 class="text-lg font-bold text-gray-800 mb-2">Exit to Main Menu?</h2>
-                                    <p class="text-gray-700 mb-4">Are you sure you want to return to the main menu? <span class="font-semibold text-red-600">All current game progress will be lost.</span></p>
-                                    <div class="flex justify-center gap-4">
-                                        <button id="confirmReturnToMenuBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg font-bold shadow hover:bg-red-700 transition">Yes, Exit</button>
-                                        <button id="cancelReturnToMenuBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-bold shadow hover:bg-gray-300 transition">Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                        <button id="undoButton" class="px-2 py-1 text-xs bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-lg shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] border border-indigo-400/30">
+                    <div class="flex justify-center gap-2 mt-2 mb-3 flex-wrap">
+                        <button id="undoButton" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-lg shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] border border-indigo-400/30">
                             ↶ Undo
                         </button>
-                        <!-- RESET BUTTON - Now triggers confirmation modal -->
-                        <button id="resetGameButton" class="px-2 py-1 text-xs bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-lg shadow-lg hover:from-red-600 hover:to-red-700 transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-red-400/30">
+                        <button id="resetGameButton" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-lg shadow-lg hover:from-red-600 hover:to-red-700 transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-red-400/30">
                             🔄 Reset
+                        </button>
+                        <button id="returnToMainMenuBtn" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg shadow-lg hover:from-red-700 hover:to-red-800 transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-red-500/30">
+                            ← Menu
                         </button>
                     </div>
                     
-                    <!-- Number Pad (Quick Input - Primary Action) -->
+                    <!-- Number Pad -->
                     <div class="flex flex-col items-center flex-1">
                         <div class="w-full max-w-sm"> 
-                            <!-- Three equal columns: 2, 3, and 456 combined -->
                             <div id="topButtons" class="grid grid-cols-3 gap-2 mb-2"> 
-                                <!-- 2 Darts Button -->
-                                <button data-darts="2" class="darts-key-btn bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 border-emerald-400/30 py-3">
-                                    <span class="text-2xl font-black">2</span>
-                                    <div class="text-xs opacity-90 mt-1">EXCELLENT</div>
+                                <button type="button" data-darts="2" class="darts-key-btn bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 border-emerald-400/30 py-3 sm:py-4 cursor-pointer min-h-[80px] sm:min-h-[90px]">
+                                    <span class="text-2xl sm:text-3xl font-black">2</span>
+                                    <div class="text-xs sm:text-sm opacity-90 mt-1">EXCELLENT</div>
                                 </button>
                                 
-                                <!-- 3 Darts Button -->
-                                <button data-darts="3" class="darts-key-btn bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 hover:from-yellow-500 hover:to-yellow-600 border-amber-300/30 py-3">
-                                    <span class="text-2xl font-black">3</span>
-                                    <div class="text-xs opacity-90 mt-1">GREAT</div>
+                                <button type="button" data-darts="3" class="darts-key-btn bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 border-blue-400/30 py-3 sm:py-4 cursor-pointer min-h-[80px] sm:min-h-[90px]">
+                                    <span class="text-2xl sm:text-3xl font-black">3</span>
+                                    <div class="text-xs sm:text-sm opacity-90 mt-1">GREAT</div>
                                 </button>
                                 
-                                <!-- 4,5,6 Button (no dropdown) -->
-                                <button data-darts="4" id="combinedButton456" class="darts-key-btn bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 border-orange-300/30 py-3">
-                                    <span class="text-2xl font-black flex gap-2 justify-center text-white">4 <span class="mx-1">,</span> 5 <span class="mx-1">,</span> 6</span>
-                                    <div class="text-xs opacity-90 mt-1 font-bold text-blue-100">Good</div>
+                                <button type="button" data-darts="4" id="combinedButton456" class="darts-key-btn bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 hover:from-amber-500 hover:to-amber-600 border-amber-300/30 w-full relative py-3 sm:py-4 cursor-pointer min-h-[80px] sm:min-h-[90px]">
+                                    <span class="text-xl sm:text-2xl font-black">4-6</span>
+                                    <div class="text-xs sm:text-sm opacity-90 mt-1">GOOD</div>
                                 </button>
                             </div>
 
-                            <!-- Miss Button: 0 Points (Red) - Full Width -->
-                            <button data-darts="0" id="missButton" class="darts-key-btn bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 w-full border-red-400/30 py-3">
-                                <span class="text-xl font-black">MISS (0)</span>
-                                <div class="text-xs opacity-90 mt-1">7+ DARTS</div>
+                            <button type="button" data-darts="0" id="missButton" class="darts-key-btn bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 w-full border-red-400/30 py-3 sm:py-4 cursor-pointer min-h-[80px] sm:min-h-[90px]">
+                                <span class="text-lg sm:text-xl font-black">MISS (0)</span>
+                                <div class="text-xs sm:text-sm opacity-90 mt-1">7+ DARTS</div>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Total Score & Progress -->
-                <div class="grid grid-cols-2 gap-2 text-center flex-shrink-0">
-                    <div class="p-2 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg border border-blue-200/50 backdrop-blur-sm">
-                        <p class="text-xs text-blue-700 font-bold flex items-center justify-center gap-1">
-                            💯 <span>Score</span>
-                        </p>
-                        <div id="totalScoreDisplay" class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">18</div>
-                        <div class="text-xs text-blue-600 font-medium">out of 120</div>
+                <div id="scoreDisplayContainer" class="grid grid-cols-1 gap-2 text-center flex-shrink-0">
+                    <!-- Single Player View -->
+                    <div id="singlePlayerScoreDisplay" class="grid grid-cols-2 gap-2">
+                        <div class="p-2 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg border border-blue-200/50 backdrop-blur-sm">
+                            <p class="text-xs text-blue-700 font-bold flex items-center justify-center gap-1">
+                                💯 <span>Score</span>
+                            </p>
+                            <div id="totalScoreDisplay" class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">0</div>
+                            <div class="text-xs text-blue-600 font-medium">out of 120</div>
+                        </div>
+                        <div class="p-2 bg-gradient-to-br from-emerald-50 to-green-100 rounded-lg shadow-lg border border-emerald-200/50 backdrop-blur-sm">
+                            <p class="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                                🏆 <span>Progress</span>
+                            </p>
+                            <div id="outsCompletedDisplay" class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700">0 / 40</div>
+                            <div class="text-xs text-emerald-600 font-medium">outs done</div>
+                        </div>
                     </div>
-                    <div class="p-2 bg-gradient-to-br from-emerald-50 to-green-100 rounded-lg shadow-lg border border-emerald-200/50 backdrop-blur-sm">
-                        <p class="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
-                            🏆 <span>Progress</span>
-                        </p>
-                        <div id="outsCompletedDisplay" class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700">10 / 40</div>
-                        <div class="text-xs text-emerald-600 font-medium">outs done</div>
-                    </div>
-                </div>
 
-            </div>
-            <!-- END GAME TAB CONTENT -->
-
-            <!-- RULES TAB CONTENT -->
-                        <div id="leaderboardTabContent" class="h-full overflow-y-auto hidden">
-                            <div class="mb-4">
-                                <h2 class="text-xl font-black text-yellow-700 mb-3 border-b-2 border-yellow-400 pb-2 flex items-center gap-2">
-                                    🏆 <span>Leaderboard</span>
-                                </h2>
-                                <div class="p-3 bg-gradient-to-br from-yellow-50 to-white rounded-xl shadow-lg border border-yellow-200/50 mb-4">
-                                    <table class="w-full text-sm text-left">
-                                        <thead>
-                                            <tr class="text-yellow-800">
-                                                <th class="py-2 px-2">Player</th>
-                                                <th class="py-2 px-2">Score</th>
-                                                <th class="py-2 px-2">Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="leaderboardTable">
-                                            <tr><td colspan="3" class="text-center text-gray-400">No scores yet.</td></tr>
-                                        </tbody>
-                                    </table>
+                    <!-- Two Player View -->
+                    <div id="twoPlayerScoreDisplay" class="hidden grid grid-cols-2 gap-2">
+                        <!-- Player 1 Stats -->
+                        <div id="player1ScoreBox" class="p-3 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg border-2 border-blue-200/50 backdrop-blur-sm transition-all duration-200">
+                            <p class="text-xs font-bold flex items-center justify-center gap-1 mb-2">
+                                <span id="player1Name" class="text-indigo-700">Player 1</span>
+                            </p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p class="text-xs text-blue-600 font-semibold">💯 Score</p>
+                                    <div id="player1ScoreValue" class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">0</div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-emerald-600 font-semibold">🏆 Progress</p>
+                                    <div id="player1ProgressValue" class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700">0/40</div>
                                 </div>
                             </div>
                         </div>
-            <div id="rulesTabContent" class="h-full overflow-y-auto hidden">
 
-                 <!-- Rules and Point Explanation Section -->
+                        <!-- Player 2 Stats -->
+                        <div id="player2ScoreBox" class="p-3 bg-gradient-to-br from-purple-50 to-pink-100 rounded-lg shadow-lg border-2 border-purple-200/50 backdrop-blur-sm transition-all duration-200">
+                            <p class="text-xs font-bold flex items-center justify-center gap-1 mb-2">
+                                <span id="player2Name" class="text-purple-700">Player 2</span>
+                            </p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p class="text-xs text-purple-600 font-semibold">💯 Score</p>
+                                    <div id="player2ScoreValue" class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-700">0</div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-pink-600 font-semibold">🏆 Progress</p>
+                                    <div id="player2ProgressValue" class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-red-700">0/40</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RULES TAB CONTENT -->
+            <div id="rulesTabContent" class="h-full overflow-y-auto hidden">
                 <div class="mb-4">
                     <h2 class="text-xl font-black text-gray-800 mb-3 border-b-2 border-gradient-to-r from-indigo-400 to-purple-400 pb-2 flex items-center gap-2">
                         📚 <span>How to Play Catch 41</span>
@@ -372,143 +374,155 @@
                         </p>
                     </div>
                 </div>
-
             </div>
-            <!-- END RULES TAB CONTENT -->
-            
-            <!-- Completion Modal (Hidden by default) -->
-            <div id="completionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-start justify-center p-4 pt-16">
-                <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
-                    <div class="w-20 h-20 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
-                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+
+            <!-- LEADERBOARD TAB CONTENT -->
+            <div id="leaderboardTabContent" class="h-full overflow-y-auto hidden">
+                <div class="mb-4">
+                    <h2 class="text-xl font-black text-gray-800 mb-3 border-b-2 border-gradient-to-r from-indigo-400 to-purple-400 pb-2 flex items-center gap-2">
+                        🏆 <span>Leaderboard</span>
+                    </h2>
+
+                    <div id="leaderboardTableWrapper" class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                                <tr>
+                                    <th class="py-3 px-4 text-left font-bold">Rank</th>
+                                    <th class="py-3 px-4 text-left font-bold">Name</th>
+                                    <th class="py-3 px-4 text-left font-bold">Score</th>
+                                    <th class="py-3 px-4 text-left font-bold">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardTable">
+                                <tr>
+                                    <td colspan="4" class="py-4 text-center text-gray-400">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">🎉 Practice Complete!</h3>
-                    <p class="text-gray-600 mb-8 text-lg">You've finished all outs from 61 to 100.</p>
-                    <div class="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl mb-8 border border-blue-200/50">
-                        <p class="text-lg text-blue-700 font-bold mb-2">Final Score</p>
-                        <p class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700"><span id="finalScore"></span> / 120</p>
-                    </div>
-                    <button id="completionModalResetButton" class="w-full px-6 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 transform hover:scale-[1.02] border border-indigo-400/30">
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div id="completionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-start justify-center p-4 pt-16">
+            <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
+                <div class="w-20 h-20 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">🎉 Practice Complete!</h3>
+                <p class="text-gray-600 mb-8 text-lg">You've finished all outs from 61 to 100.</p>
+                <div class="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl mb-8 border border-blue-200/50">
+                    <p class="text-lg text-blue-700 font-bold mb-2">Final Score</p>
+                    <p class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">
+                        <span id="finalScore">0</span> / 120
+                    </p>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <button id="completionModalResetButton" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-indigo-600 hover:to-indigo-700 transition duration-200 transform hover:scale-[1.02] border border-indigo-400/30">
                         🔄 Start New Session
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Confirmation Modal for Reset Game (NEW) -->
-            <div id="confirmResetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-start justify-center p-4 pt-16">
-                <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
-                    <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
-                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">⚠️ Confirm Reset</h3>
-                    <p class="text-gray-600 mb-8 text-lg leading-relaxed">
-                        Are you sure you want to restart the game? All current progress will be lost.
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <button id="confirmResetCancelButton" class="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold rounded-xl hover:from-gray-500 hover:to-gray-600 transition duration-200 shadow-lg border border-gray-300/30">
-                            Cancel
-                        </button>
-                        <button id="confirmResetConfirmButton" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-xl hover:from-red-600 hover:to-red-700 transition duration-200 shadow-lg border border-red-400/30">
-                            🔄 Confirm Restart
-                        </button>
-                    </div>
+        <!-- Celebration Modal for Top 10 Scores -->
+        <div id="celebrationModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9998] hidden items-center justify-center p-4">
+            <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
+                <div class="w-24 h-24 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg text-4xl">
+                    🏆
+                </div>
+                <h3 class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-500 mb-4">Congratulations!</h3>
+                <p class="text-gray-700 mb-2 text-lg font-bold">New High Score!</p>
+                <p id="celebrationPlayerName" class="text-gray-600 mb-4 text-base">Great job!</p>
+                <div class="p-6 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl mb-6 border border-yellow-200/50">
+                    <p class="text-sm text-amber-700 font-bold mb-2">🌟 Top 10 Leaderboard</p>
+                    <p id="celebrationScore" class="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-yellow-600">0</p>
+                    <p class="text-xs text-amber-600 mt-2">Points</p>
+                </div>
+                <button id="celebrationCloseBtn" class="w-full px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:from-amber-600 hover:to-amber-700 transition duration-200 border border-amber-400/30">
+                    🎉 Continue
+                </button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Modal (Welcome Page View) -->
+        <div id="confirmResetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-start justify-center p-4 pt-16">
+            <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
+                <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">⚠️ Confirm Reset</h3>
+                <p class="text-gray-600 mb-8 text-lg leading-relaxed">
+                    Are you sure you want to restart the game? All current progress will be lost.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="confirmResetCancelButton" class="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold rounded-xl hover:from-gray-500 hover:to-gray-600 transition duration-200 shadow-lg border border-gray-300/30">
+                        Cancel
+                    </button>
+                    <button id="confirmResetConfirmButton" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-xl hover:from-red-600 hover:to-red-700 transition duration-200 shadow-lg border border-red-400/30">
+                        🔄 Confirm Reset
+                    </button>
                 </div>
             </div>
-
         </div>
-    </div> <!-- END of div#app -->
 
-    <!-- Leaderboard Section -->
-    <div id="leaderboardSection" class="mt-6 mb-4 p-4 bg-gradient-to-br from-yellow-50 to-amber-100 rounded-2xl shadow-lg border border-amber-200/50">
-        <h2 class="text-lg font-black text-amber-700 mb-2 flex items-center gap-2">
-            🏅 <span>Leaderboard</span>
-        </h2>
-        <form id="leaderboardForm" class="flex flex-col sm:flex-row gap-2 mb-3">
-            <input id="lbName" type="text" maxlength="32" required="" placeholder="Your Name" class="flex-1 px-3 py-2 rounded-lg border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400">
-            <input id="lbScore" type="number" min="0" max="120" required="" placeholder="Score" class="w-24 px-3 py-2 rounded-lg border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400">
-            <button type="submit" class="px-4 py-2 bg-amber-500 text-white font-bold rounded-lg shadow hover:bg-amber-600 transition">Submit</button>
-        </form>
-        <div id="leaderboardTableWrapper">
-            <table class="w-full text-sm text-left">
-                <thead>
-                    <tr class="text-amber-800">
-                        <th class="py-1">Name</th>
-                        <th class="py-1">Score</th>
-                        <th class="py-1">Date</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardTable"><tr><td class="py-1">player1</td><td class="py-1">100</td><td class="py-1">2025-11-18</td></tr></tbody>
-            </table>
+        <!-- Return to Main Menu Confirmation Modal -->
+        <div id="confirmReturnModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-start justify-center p-4 pt-16">
+            <div class="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md text-center border border-white/20">
+                <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 mb-4">⚠️ Return to Main Menu</h3>
+                <p class="text-gray-600 mb-8 text-lg leading-relaxed">
+                    Are you sure you would like to return to the main menu? All current game progress will be lost.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="confirmReturnCancelButton" class="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold rounded-xl hover:from-gray-500 hover:to-gray-600 transition duration-200 shadow-lg border border-gray-300/30">
+                        Cancel
+                    </button>
+                    <button id="confirmReturnConfirmButton" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-xl hover:from-red-600 hover:to-red-700 transition duration-200 shadow-lg border border-red-400/30">
+                        ← Return to Menu
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="lbError" class="text-red-500 font-bold mt-2 text-xs"></div>
     </div>
 
-    <!-- Firebase SDKs and Supabase Leaderboard Integration -->
     <script>
-        // --- Supabase Leaderboard Integration ---
-        // Safety defaults for globals that may be referenced elsewhere
-        window.playAsGuest = window.playAsGuest || false;
-        window.firebaseConfig = window.firebaseConfig || {};
-        window.dropdown = typeof window.dropdown !== 'undefined' ? window.dropdown : null;
-        window.CGC_CATCH41_PLAYERS = window.CGC_CATCH41_PLAYERS || [{ name: 'Guest' }];
-        window.CGC_CATCH41_MODE = window.CGC_CATCH41_MODE || 1;
-        
-        const SUPABASE_URL = 'https://oyzojtvytdypzlvkbbfu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95em9qdHZ5dGR5cHpsdmtiYmZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MjgyODMsImV4cCI6MjA3OTAwNDI4M30.ngKJnpY7CWBzC5mpRWssNJ6Oi4hoUhq9wnHVkfhWlKI';
-        // Simple fetch wrapper for Supabase REST API
-        async function fetchLeaderboard() {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,created_at&id=gt.0&order=score.desc&limit=10`, {
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    Authorization: `Bearer ${SUPABASE_KEY}`
-                }
-            });
-            if (!res.ok) return [];
-            return await res.json();
-        }
-        async function submitScore(name, score) {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
-                method: 'POST',
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    Authorization: `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json',
-                    Prefer: 'return=representation'
-                },
-                body: JSON.stringify({ username: name, score: Number(score) })
-            });
-            if (!res.ok) throw new Error('Failed to submit score');
-            return await res.json();
-        }
-        function formatDate(dateStr) {
-            const d = new Date(dateStr);
-            return d.toLocaleDateString();
-        }
-        async function renderLeaderboard() {
-            const table = document.getElementById('leaderboardTable');
-            table.innerHTML = '<tr><td colspan="3" class="text-center text-gray-400">Loading...</td></tr>';
-            try {
-                const data = await fetchLeaderboard();
-                if (!data.length) {
-                    table.innerHTML = '<tr><td colspan="3" class="text-center text-gray-400">No scores yet.</td></tr>';
-                    return;
-                }
-                table.innerHTML = data.map(row => `<tr><td class="py-1">${row.username}</td><td class="py-1">${row.score}</td><td class="py-1">${formatDate(row.created_at)}</td></tr>`).join('');
-            } catch {
-                table.innerHTML = '<tr><td colspan="3" class="text-center text-red-400">Error loading leaderboard.</td></tr>';
-            }
-        }
-        // DOMContentLoaded handler removed - consolidated into window.onload
-
         // Game Constants
         const MIN_OUT = 61;
         const MAX_OUT = 100;
         const MAX_SCORE = 120;
-        const OUTS_COUNT = MAX_OUT - MIN_OUT + 1; // 40 outs
+        const OUTS_COUNT = MAX_OUT - MIN_OUT + 1;
+
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://oyzojtvytdypzlvkbbfu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95em9qdHZ5dGR5cHpsdmtiYmZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MjgyODMsImV4cCI6MjA3OTAwNDI4M30.ngKJnpY7CWBzC5mpRWssNJ6Oi4hoUhq9wnHVkfhWlKI';
+
+        // Game Variables
+        let gameMode = 1;
+        let currentPlayer = 1;
+        let playerName = 'Guest';
+        let player2Name = null;
+        let activeTab = 'game';
+        
+        // Two-player game state
+        let player2State = {
+            totalScore: 0,
+            currentOut: MIN_OUT,
+            outsCompleted: 0,
+            totalDartsThrown: 0,
+            outsData: {},
+            lastUpdated: new Date().toISOString(),
+            previousState: null
+        };
 
         // Recommended Takeouts Data
         const TAKEOUTS = {
@@ -554,36 +568,23 @@
             100: { text: "T20-D20 (60 - 40)", description: "Treble 20, Double 20" }
         };
 
-        // Game State (Local representation of Firestore document)
+        // Game State
         let gameState = {
             totalScore: 0,
             currentOut: MIN_OUT,
             outsCompleted: 0,
             totalDartsThrown: 0,
-            outsData: {}, // Map of {61: {darts: 3, score: 2}, 62: ...}
-            // Two-player mode additions:
-            playerScores: [0, 0], // [p1, p2]
-            playerOutsData: [{}, {}], // [p1 outs, p2 outs]
-            playerProgress: [0, 0], // [p1 outsCompleted, p2 outsCompleted]
-            activePlayer: 0, // 0 or 1
-            playerCurrentOuts: [MIN_OUT, MIN_OUT], // Current out for each player
+            outsData: {},
             lastUpdated: new Date().toISOString(),
-            previousState: null, // Stores state before last recordFinish for undo
-            activeTab: 'game'
+            previousState: null
         };
-        
-        // Make gameState globally accessible
-        window.gameState = gameState;
 
-        // --- Utility Functions ---
-
-        /** Calculates points based on darts used and current out. */
+        // Utility Functions
         function calculatePoints(darts, outScore) {
             if (darts < 2 || darts > 6) return 0; 
             
             if (darts === 2) return 3;
             if (darts === 3) {
-                // Exception: 99 out in 3 darts scores 3 points
                 if (outScore === 99) return 3; 
                 return 2;
             }
@@ -592,24 +593,155 @@
             return 0; 
         }
 
-        // --- Modal Control Functions ---
-
-        /** Shows the confirmation modal for resetting the game. */
-        function showConfirmResetModal() {
-            document.getElementById('confirmResetModal').classList.add('flex');
-            document.getElementById('confirmResetModal').classList.remove('hidden');
+        // localStorage Functions
+        function saveGameState() {
+            gameState.lastUpdated = new Date().toISOString();
+            player2State.lastUpdated = new Date().toISOString();
+            try {
+                localStorage.setItem('catch41_gameState', JSON.stringify(gameState));
+                localStorage.setItem('catch41_player2State', JSON.stringify(player2State));
+                localStorage.setItem('catch41_gameMode', JSON.stringify(gameMode));
+                localStorage.setItem('catch41_currentPlayer', JSON.stringify(currentPlayer));
+            } catch (e) {
+                console.error("Error saving game state:", e);
+            }
         }
 
-        /** Hides the confirmation modal for resetting the game. */
-        function hideConfirmResetModal() {
-            document.getElementById('confirmResetModal').classList.remove('flex');
-            document.getElementById('confirmResetModal').classList.add('hidden');
+        function loadGameState() {
+            try {
+                const saved = localStorage.getItem('catch41_gameState');
+                if (saved) {
+                    const loadedState = JSON.parse(saved);
+                    gameState = {
+                        ...loadedState,
+                        currentOut: parseInt(loadedState.currentOut),
+                        previousState: loadedState.previousState || null
+                    };
+                }
+                
+                const savedPlayer2 = localStorage.getItem('catch41_player2State');
+                if (savedPlayer2) {
+                    const loadedPlayer2State = JSON.parse(savedPlayer2);
+                    player2State = {
+                        ...loadedPlayer2State,
+                        currentOut: parseInt(loadedPlayer2State.currentOut),
+                        previousState: loadedPlayer2State.previousState || null
+                    };
+                }
+                
+                // Only load currentPlayer if in 2-player mode
+                if (gameMode === 2) {
+                    const savedCurrentPlayer = localStorage.getItem('catch41_currentPlayer');
+                    if (savedCurrentPlayer) {
+                        currentPlayer = JSON.parse(savedCurrentPlayer);
+                    }
+                } else {
+                    // In single-player mode, always use player 1
+                    currentPlayer = 1;
+                }
+            } catch (e) {
+                console.error("Error loading game state:", e);
+            }
+            renderUI();
         }
 
+        // Supabase Functions
+        async function fetchLeaderboard() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=username,score,created_at&id=gt.0&order=score.desc&limit=10`, {
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization: `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                if (!res.ok) return [];
+                return await res.json();
+            } catch (e) {
+                console.error('Error fetching leaderboard:', e);
+                return [];
+            }
+        }
 
-        // --- UI Update Logic ---
-        
-        /** Updates the takeout display for the current out. */
+        async function submitScore(name, score) {
+            try {
+                // Reject guest submissions
+                const lowerName = name.toLowerCase();
+                if (lowerName === 'guest' || lowerName === 'guest 2') {
+                    console.log(`Guest score ${score} rejected - guests cannot submit to leaderboard`);
+                    return { skipped: true, reason: 'Guest players cannot submit scores' };
+                }
+                
+                // First, fetch existing scores for this player
+                const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?username=eq.${encodeURIComponent(name)}&select=score`, {
+                    method: 'GET',
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization: `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!checkRes.ok) throw new Error('Failed to check existing scores');
+                const existingScores = await checkRes.json();
+                
+                // If player exists and new score is not higher, don't submit
+                if (existingScores && existingScores.length > 0) {
+                    const highestExisting = Math.max(...existingScores.map(s => s.score));
+                    if (score <= highestExisting) {
+                        console.log(`Score ${score} not higher than existing high score ${highestExisting}, skipping submission`);
+                        return { skipped: true, reason: 'Score not higher than existing' };
+                    }
+                }
+                
+                // Submit the new score
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+                    method: 'POST',
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization: `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        Prefer: 'return=representation'
+                    },
+                    body: JSON.stringify({ username: name, score: Number(score) })
+                });
+                if (!res.ok) throw new Error('Failed to submit score');
+                return await res.json();
+            } catch (e) {
+                console.error('Error submitting score:', e);
+                throw e;
+            }
+        }
+
+        async function renderLeaderboard() {
+            const table = document.getElementById('leaderboardTable');
+            table.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-gray-400">Loading...</td></tr>';
+            
+            try {
+                const data = await fetchLeaderboard();
+                if (!data.length) {
+                    table.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-gray-400">No scores yet.</td></tr>';
+                    return;
+                }
+                
+                table.innerHTML = data.map((row, index) => 
+                    `<tr class="${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+                        <td class="py-2 px-4 font-bold text-indigo-600">${index + 1}</td>
+                        <td class="py-2 px-4">${row.username}</td>
+                        <td class="py-2 px-4 font-bold">${row.score}</td>
+                        <td class="py-2 px-4 text-gray-500">${formatDate(row.created_at)}</td>
+                    </tr>`
+                ).join('');
+            } catch (e) {
+                table.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-red-400">Error loading leaderboard.</td></tr>';
+            }
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString();
+        }
+
+        // UI Update Functions
         function updateTakeoutDisplay() {
             const takeout = TAKEOUTS[gameState.currentOut];
             const takeoutTextEl = document.getElementById('takeoutText');
@@ -619,65 +751,170 @@
             if (takeout && gameState.currentOut <= MAX_OUT) {
                 takeoutTextEl.textContent = takeout.text;
                 takeoutDescEl.textContent = takeout.description;
-                takeoutDisplayEl.classList.remove('hidden');
                 takeoutDisplayEl.style.display = 'block';
             } else {
-                takeoutDisplayEl.classList.add('hidden');
                 takeoutDisplayEl.style.display = 'none';
             }
         }
+
+        // Auto-submit function for scores
+        async function autoSubmitScores() {
+            try {
+                // Fetch current leaderboard to check for top 10
+                const leaderboardData = await fetchLeaderboard();
+                const topScores = leaderboardData.map(s => s.score);
+                
+                if (gameMode === 1) {
+                    // Single-player mode
+                    const name = playerName;
+                    const score = gameState.totalScore;
+                    
+                    // Only submit if not guest
+                    if (name.toLowerCase() !== 'guest') {
+                        const result = await submitScore(name, score);
+                        if (result && !result.skipped) {
+                            console.log(`Score ${score} submitted for ${name}`);
+                            // Check if it's a top 10 score
+                            if (topScores.length < 10 || score >= Math.min(...topScores)) {
+                                showCelebration(name, score);
+                            }
+                        } else if (result && result.skipped) {
+                            console.log(`Score ${score} not submitted - existing higher score for ${name}`);
+                        }
+                    }
+                } else {
+                    // Two-player mode
+                    const player1Score = gameState.totalScore;
+                    const player2Score = player2State.totalScore;
+                    
+                    // Submit player 1 score if not guest
+                    if (playerName.toLowerCase() !== 'guest') {
+                        try {
+                            const result = await submitScore(playerName, player1Score);
+                            if (result && !result.skipped) {
+                                console.log(`Score ${player1Score} submitted for ${playerName}`);
+                                // Check if it's a top 10 score
+                                if (topScores.length < 10 || player1Score >= Math.min(...topScores)) {
+                                    showCelebration(playerName, player1Score);
+                                }
+                            } else if (result && result.skipped) {
+                                console.log(`Score ${player1Score} not submitted - existing higher score for ${playerName}`);
+                            }
+                        } catch (e) {
+                            console.error(`Failed to submit ${playerName}'s score:`, e);
+                        }
+                    }
+                    
+                    // Submit player 2 score if not guest
+                    if (player2Name && player2Name.toLowerCase() !== 'guest') {
+                        try {
+                            const result = await submitScore(player2Name, player2Score);
+                            if (result && !result.skipped) {
+                                console.log(`Score ${player2Score} submitted for ${player2Name}`);
+                                // Check if it's a top 10 score
+                                if (topScores.length < 10 || player2Score >= Math.min(...topScores)) {
+                                    showCelebration(player2Name, player2Score);
+                                }
+                            } else if (result && result.skipped) {
+                                console.log(`Score ${player2Score} not submitted - existing higher score for ${player2Name}`);
+                            }
+                        } catch (e) {
+                            console.error(`Failed to submit ${player2Name}'s score:`, e);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error in auto-submit:', e);
+            }
+        }
         
-        /** Updates the core game display elements. */
+        // Show celebration modal for top 10 scores
+        function showCelebration(playerName, score) {
+            document.getElementById('celebrationPlayerName').textContent = `You made the top 10, ${playerName}!`;
+            document.getElementById('celebrationScore').textContent = score;
+            document.getElementById('celebrationModal').classList.remove('hidden');
+            document.getElementById('celebrationModal').classList.add('flex');
+        }
+
         function updateMainDisplay() {
-            // Update Core Game Numbers
-            document.getElementById('currentOutDisplay').textContent = gameState.currentOut;
-            document.getElementById('totalScoreDisplay').textContent = gameState.totalScore;
-            document.getElementById('outsCompletedDisplay').textContent = `${gameState.outsCompleted} / ${OUTS_COUNT}`;
+            // Determine which game state to display
+            const activeState = gameMode === 2 && currentPlayer === 2 ? player2State : gameState;
             
-            // Update Takeout Display
+            document.getElementById('currentOutDisplay').textContent = activeState.currentOut;
+            document.getElementById('totalScoreDisplay').textContent = activeState.totalScore;
+            document.getElementById('outsCompletedDisplay').textContent = `${activeState.outsCompleted} / ${OUTS_COUNT}`;
+            
             updateTakeoutDisplay();
             
-            // Update Undo Button Status
+            // Update two-player display if in 2-player mode
+            if (gameMode === 2) {
+                const singleDisplay = document.getElementById('singlePlayerScoreDisplay');
+                const twoDisplay = document.getElementById('twoPlayerScoreDisplay');
+                const player1Box = document.getElementById('player1ScoreBox');
+                const player2Box = document.getElementById('player2ScoreBox');
+                
+                // Show two-player display, hide single
+                singleDisplay.classList.add('hidden');
+                twoDisplay.classList.remove('hidden');
+                
+                // Update player names and stats
+                document.getElementById('player1Name').textContent = playerName;
+                document.getElementById('player1ScoreValue').textContent = gameState.totalScore;
+                document.getElementById('player1ProgressValue').textContent = `${gameState.outsCompleted} / ${OUTS_COUNT}`;
+                
+                document.getElementById('player2Name').textContent = player2Name || 'Player 2';
+                document.getElementById('player2ScoreValue').textContent = player2State.totalScore;
+                document.getElementById('player2ProgressValue').textContent = `${player2State.outsCompleted} / ${OUTS_COUNT}`;
+                
+                // Highlight current player's box
+                if (currentPlayer === 1) {
+                    player1Box.classList.add('border-yellow-400', 'bg-indigo-50');
+                    player2Box.classList.remove('border-yellow-400', 'bg-indigo-50');
+                } else {
+                    player1Box.classList.remove('border-yellow-400', 'bg-indigo-50');
+                    player2Box.classList.add('border-yellow-400', 'bg-pink-50');
+                }
+            } else {
+                // Show single-player display
+                const singleDisplay = document.getElementById('singlePlayerScoreDisplay');
+                const twoDisplay = document.getElementById('twoPlayerScoreDisplay');
+                
+                singleDisplay.classList.remove('hidden');
+                twoDisplay.classList.add('hidden');
+            }
+            
             const undoButton = document.getElementById('undoButton');
-            // Allow undo only if previous state exists and game is not fully reset/finished
-            const canUndo = gameState.previousState !== null && gameState.currentOut <= MAX_OUT + 1; 
+            const canUndo = activeState.previousState !== null && activeState.currentOut <= MAX_OUT + 1; 
             undoButton.disabled = !canUndo;
 
-            // Update Completion Modal Visibility
             const completionModal = document.getElementById('completionModal');
             const dartsButtons = document.querySelectorAll('.darts-key-btn');
 
-            if (gameState.currentOut > MAX_OUT) {
-                // Game Finished state
+            if (activeState.currentOut > MAX_OUT) {
                 completionModal.classList.add('flex');
                 completionModal.classList.remove('hidden');
-                document.getElementById('finalScore').textContent = gameState.totalScore;
+                document.getElementById('finalScore').textContent = activeState.totalScore;
                 
-                // Disable all game-interaction elements
+                // Auto-submit scores if not guest
+                autoSubmitScores();
+                
                 dartsButtons.forEach(btn => btn.disabled = true);
                 document.getElementById('undoButton').disabled = true;
                 document.getElementById('resetGameButton').disabled = true;
-                
-                // Hide takeout display when game is finished
                 document.getElementById('takeoutDisplay').style.display = 'none';
-
             } else {
-                // Game Active state
                 completionModal.classList.remove('flex');
                 completionModal.classList.add('hidden');
                 
-                // Ensure buttons are enabled if game is active
                 dartsButtons.forEach(btn => btn.disabled = false);
                 document.getElementById('resetGameButton').disabled = false;
             }
         }
-        
-        /** Renders the current game state to the UI. */
+
         function renderUI() {
-            console.log('renderUI called, activeTab=', gameState && gameState.activeTab);
             updateMainDisplay();
 
-            // Tab visibility logic
+            // Tab visibility
             const gameContent = document.getElementById('gameTabContent');
             const rulesContent = document.getElementById('rulesTabContent');
             const leaderboardContent = document.getElementById('leaderboardTabContent');
@@ -685,255 +922,136 @@
             const rulesTabBtn = document.getElementById('rulesTabBtn');
             const leaderboardTabBtn = document.getElementById('leaderboardTabBtn');
 
-            if (gameState.activeTab === 'game') {
-                gameContent.classList.remove('hidden');
-                rulesContent.classList.add('hidden');
-                leaderboardContent.classList.add('hidden');
+            // Reset all tabs
+            [gameContent, rulesContent, leaderboardContent].forEach(el => el.classList.add('hidden'));
+            [gameTabBtn, rulesTabBtn, leaderboardTabBtn].forEach(btn => {
+                btn.classList.remove('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
+            });
 
+            // Show active tab
+            if (activeTab === 'game') {
+                gameContent.classList.remove('hidden');
                 gameTabBtn.classList.add('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
                 gameTabBtn.classList.remove('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                rulesTabBtn.classList.remove('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
-                rulesTabBtn.classList.add('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                leaderboardTabBtn.classList.remove('bg-yellow-50', 'border-yellow-400', 'text-yellow-700');
-                leaderboardTabBtn.classList.add('text-yellow-700', 'hover:bg-yellow-50', 'border-transparent');
-            } else if (gameState.activeTab === 'rules') {
-                gameContent.classList.add('hidden');
+            } else if (activeTab === 'rules') {
                 rulesContent.classList.remove('hidden');
-                leaderboardContent.classList.add('hidden');
-
                 rulesTabBtn.classList.add('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
                 rulesTabBtn.classList.remove('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                gameTabBtn.classList.remove('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
-                gameTabBtn.classList.add('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                leaderboardTabBtn.classList.remove('bg-yellow-50', 'border-yellow-400', 'text-yellow-700');
-                leaderboardTabBtn.classList.add('text-yellow-700', 'hover:bg-yellow-50', 'border-transparent');
-            } else if (gameState.activeTab === 'leaderboard') {
-                gameContent.classList.add('hidden');
-                rulesContent.classList.add('hidden');
+            } else if (activeTab === 'leaderboard') {
                 leaderboardContent.classList.remove('hidden');
-
-                leaderboardTabBtn.classList.add('bg-yellow-50', 'border-yellow-400', 'text-yellow-700');
-                leaderboardTabBtn.classList.remove('text-yellow-700', 'hover:bg-yellow-50', 'border-transparent');
-
-                gameTabBtn.classList.remove('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
-                gameTabBtn.classList.add('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                rulesTabBtn.classList.remove('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
-                rulesTabBtn.classList.add('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
-
-                // Call the async Supabase leaderboard renderer
-                if (window.renderLeaderboard) window.renderLeaderboard();
+                leaderboardTabBtn.classList.add('bg-indigo-50/50', 'border-indigo-600', 'text-indigo-700');
+                leaderboardTabBtn.classList.remove('text-gray-600', 'hover:bg-gray-50/50', 'border-transparent');
+                renderLeaderboard(); // Load leaderboard when tab is shown
+            }
+            
+            // Update current player display
+            const currentPlayerDisplay = document.getElementById('currentPlayerDisplay');
+            if (gameMode === 2) {
+                const displayName = currentPlayer === 1 ? playerName : player2Name;
+                currentPlayerDisplay.textContent = `Player ${currentPlayer}: ${displayName}`;
+            } else {
+                currentPlayerDisplay.textContent = playerName;
             }
         }
 
-        // Debug helper: simulate main flows from console
-        window.runMainFlows = async function() {
-            console.log('=== runMainFlows start ===');
-            try {
-                const startBtn = document.getElementById('startGameBtn');
-                if (startBtn) {
-                    console.log('Clicking Start Game...');
-                    startBtn.click();
-                } else console.warn('startGameBtn not found');
-
-                // wait a moment
-                await new Promise(r => setTimeout(r, 300));
-
-                // simulate a few scoring button presses
-                const dartsButtons = document.querySelectorAll('[data-darts]');
-                if (dartsButtons && dartsButtons.length) {
-                    console.log('Simulating scoring buttons...');
-                    for (let i = 0; i < Math.min(3, dartsButtons.length); i++) {
-                        console.log('Clicking', dartsButtons[i].getAttribute('data-darts'));
-                        dartsButtons[i].click();
-                        // small delay between clicks
-                        // eslint-disable-next-line no-await-in-loop
-                        await new Promise(r => setTimeout(r, 150));
-                    }
-                } else console.warn('No scoring buttons found');
-
-                // simulate return to menu
-                const returnBtn = document.getElementById('returnToMenuButton');
-                const confirmBtn = document.getElementById('confirmReturnToMenuBtn');
-                if (returnBtn) {
-                    console.log('Clicking Return to Menu...');
-                    returnBtn.click();
-                    await new Promise(r => setTimeout(r, 200));
-                    if (confirmBtn) {
-                        console.log('Confirming return to menu...');
-                        confirmBtn.click();
-                    } else console.warn('confirmReturnToMenuBtn not found');
-                } else console.warn('returnToMenuButton not found');
-
-                console.log('Final gameState:', window.gameState);
-            } catch (e) {
-                console.error('runMainFlows error', e);
-            }
-            console.log('=== runMainFlows end ===');
-        };
-
-        // Render leaderboard from localStorage (or backend in future)
-        
-        window.switchTab = function(newTab) {
-            if (gameState.activeTab !== newTab) {
-                gameState.activeTab = newTab;
+        function switchTab(newTab) {
+            if (activeTab !== newTab) {
+                activeTab = newTab;
                 renderUI(); 
-                saveGameState(); // Save tab state
             }
         }
 
-        // --- Firestore Operations ---
-
-        /** Loads the game state from localStorage. */
-        function loadGameState() {
-            try {
-                const saved = localStorage.getItem('catch41_gameState');
-                if (saved) {
-                    const loadedState = JSON.parse(saved);
-                    gameState = {
-                        ...gameState,
-                        ...loadedState,
-                        currentOut: parseInt(loadedState.currentOut) || MIN_OUT,
-                        previousState: loadedState.previousState || null,
-                        activeTab: loadedState.activeTab || 'game'
-                    };
-                }
-            } catch (e) {
-                console.warn('Could not load game state:', e);
-            }
-            renderUI(); 
-        }
-        
-        /** Saves the current game state to localStorage. */
-        function saveGameState() {
-            try {
-                gameState.lastUpdated = new Date().toISOString();
-                const stateToSave = {
-                    totalScore: gameState.totalScore,
-                    currentOut: gameState.currentOut,
-                    outsCompleted: gameState.outsCompleted,
-                    totalDartsThrown: gameState.totalDartsThrown,
-                    outsData: gameState.outsData,
-                    previousState: gameState.previousState,
-                    lastUpdated: gameState.lastUpdated,
-                    activeTab: gameState.activeTab,
-                    playerScores: gameState.playerScores,
-                    playerOutsData: gameState.playerOutsData,
-                    playerProgress: gameState.playerProgress,
-                    activePlayer: gameState.activePlayer,
-                    playerCurrentOuts: gameState.playerCurrentOuts
-                };
-                localStorage.setItem('catch41_gameState', JSON.stringify(stateToSave));
-            } catch (e) {
-                console.warn('Could not save game state:', e);
-            }
-        }
-        
-        // --- Game Logic ---
-
-        /** Handles the user recording a finish. */
+        // Game Logic Functions
         async function recordFinish(dartsInput) {
-            console.log('recordFinish called with', dartsInput, 'activePlayer=', gameState && gameState.activePlayer);
-            const errorElement = document.getElementById('errorMessage');
-            const dartsUsed = dartsInput === 0 ? 7 : dartsInput;
-            if (window.CGC_CATCH41_MODE === 2 && Array.isArray(window.CGC_CATCH41_PLAYERS) && window.CGC_CATCH41_PLAYERS.length === 2) {
-                // Two-player mode
-                const p = gameState.activePlayer || 0;
-                const currentOut = (gameState.playerCurrentOuts && typeof gameState.playerCurrentOuts[p] === 'number') ? gameState.playerCurrentOuts[p] : (gameState.currentOut || MIN_OUT);
-                if (!gameState.playerCurrentOuts) gameState.playerCurrentOuts = [MIN_OUT, MIN_OUT];
-                if (!gameState.playerScores) gameState.playerScores = [0, 0];
-                if (!gameState.playerOutsData) gameState.playerOutsData = [{}, {}];
-                if (!gameState.playerProgress) gameState.playerProgress = [0, 0];
-                if (currentOut > MAX_OUT) {
+            try {
+                const errorElement = document.getElementById('errorMessage');
+                
+                const dartsUsed = dartsInput === 0 ? 7 : dartsInput;
+
+                // Get the active game state based on current player
+                const activeState = gameMode === 2 && currentPlayer === 2 ? player2State : gameState;
+                
+                if (activeState.currentOut > MAX_OUT) {
                     errorElement.textContent = "Game finished! Please reset to start a new session.";
                     return;
                 }
+
                 errorElement.textContent = "";
-                // Save state for undo
-                const stateToSave = JSON.parse(JSON.stringify(gameState));
+                
+                const stateToSave = JSON.parse(JSON.stringify(activeState));
                 delete stateToSave.previousState;
-                gameState.previousState = stateToSave;
-                // Update per-player outs
-                if (!gameState.playerOutsData[p][currentOut]) {
-                    gameState.playerProgress[p] += 1;
+                activeState.previousState = stateToSave;
+                
+                const currentOut = activeState.currentOut;
+                const points = calculatePoints(dartsUsed, currentOut); 
+                
+                if (!activeState.outsData[currentOut]) {
+                    activeState.outsCompleted += 1;
                 } else {
-                    gameState.playerScores[p] -= (gameState.playerOutsData[p][currentOut].score || 0);
+                    activeState.totalScore -= (activeState.outsData[currentOut].score || 0);
+                    activeState.totalDartsThrown -= (activeState.outsData[currentOut].darts || 0);
                 }
-                const points = calculatePoints(dartsUsed, currentOut);
-                gameState.playerScores[p] += points;
-                gameState.playerOutsData[p][currentOut] = { darts: dartsUsed, score: points };
-                // Move to next out for this player
-                if (gameState.playerCurrentOuts[p] <= MAX_OUT) {
-                    gameState.playerCurrentOuts[p] += 1;
+
+                activeState.totalScore += points;
+                activeState.totalDartsThrown += dartsUsed; 
+                activeState.outsData[currentOut] = { darts: dartsUsed, score: points };
+                
+                if (activeState.currentOut <= MAX_OUT) {
+                    activeState.currentOut += 1;
                 }
-                // Switch active player
-                gameState.activePlayer = (p === 0) ? 1 : 0;
+
+                if (activeState.totalScore > MAX_SCORE) {
+                    activeState.totalScore = MAX_SCORE;
+                }
+
+                // In two-player mode, switch to other player after each finish
+                if (gameMode === 2) {
+                    // Switch turn to other player
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                }
+
+                console.log('Game state updated:', gameMode === 2 && currentPlayer === 2 ? player2State : gameState);
                 updateMainDisplay();
                 saveGameState();
-            } else {
-                // Single-player mode (original logic)
-                if (gameState.currentOut > MAX_OUT) {
-                    errorElement.textContent = "Game finished! Please reset to start a new session.";
-                    return;
+            } catch (error) {
+                console.error('Error in recordFinish:', error);
+                const errorElement = document.getElementById('errorMessage');
+                if (errorElement) {
+                    errorElement.textContent = 'Error recording finish: ' + error.message;
                 }
-                errorElement.textContent = "";
-                // 0. Save current state for potential Undo
-                const stateToSave = JSON.parse(JSON.stringify(gameState));
-                delete stateToSave.previousState;
-                gameState.previousState = stateToSave;
-                const currentOut = gameState.currentOut;
-                const points = calculatePoints(dartsUsed, currentOut);
-                // 1. Update Game State
-                if (!gameState.outsData[currentOut]) {
-                    gameState.outsCompleted += 1;
-                } else {
-                    // If re-recording the same out, subtract old score/darts first
-                    gameState.totalScore -= (gameState.outsData[currentOut].score || 0);
-                    gameState.totalDartsThrown -= (gameState.outsData[currentOut].darts || 0);
-                }
-                gameState.totalScore += points;
-                gameState.totalDartsThrown += dartsUsed;
-                gameState.outsData[currentOut] = { darts: dartsUsed, score: points };
-                // 2. Move to next out
-                if (gameState.currentOut <= MAX_OUT) {
-                    gameState.currentOut += 1;
-                }
-                // Cap score at MAX_SCORE
-                if (gameState.totalScore > MAX_SCORE) {
-                    gameState.totalScore = MAX_SCORE;
-                }
-                updateMainDisplay(); // Instant update
-                saveGameState(); // Save to localStorage
             }
         }
-        
-        /** Reverts the game state to the point before the last successful recordFinish. */
+
         async function undoLastScore() {
-            if (!gameState.previousState) {
+            // Get the active game state based on current player
+            const activeState = gameMode === 2 && currentPlayer === 2 ? player2State : gameState;
+            
+            if (!activeState.previousState) {
                 console.warn("No previous state available to undo.");
                 return;
             }
             
             document.getElementById('errorMessage').textContent = "";
 
-            const previousState = gameState.previousState;
-            const currentTab = gameState.activeTab;
-
-            gameState = { 
-                ...previousState, 
-                previousState: null,
-                activeTab: currentTab
-            }; 
+            const previousState = activeState.previousState;
+            
+            if (gameMode === 2 && currentPlayer === 2) {
+                player2State = { 
+                    ...previousState, 
+                    previousState: null
+                };
+            } else {
+                gameState = { 
+                    ...previousState, 
+                    previousState: null
+                };
+            }
             
             updateMainDisplay(); 
-            await saveGameState(); 
+            saveGameState(); 
         }
-        
-        /** Resets the game state and saves the new session. */
+
         async function resetSession() {
             gameState = {
                 totalScore: 0,
@@ -942,280 +1060,203 @@
                 totalDartsThrown: 0,
                 outsData: {},
                 lastUpdated: new Date().toISOString(),
-                previousState: null,
-                activeTab: 'game' // Always reset to the game tab
+                previousState: null
             };
             
+            // Reset player 2 state as well for two-player mode
+            player2State = {
+                totalScore: 0,
+                currentOut: MIN_OUT,
+                outsCompleted: 0,
+                totalDartsThrown: 0,
+                outsData: {},
+                lastUpdated: new Date().toISOString(),
+                previousState: null
+            };
+            
+            // Reset current player to 1
+            currentPlayer = 1;
+            
+            activeTab = 'game';
             updateMainDisplay(); 
             saveGameState();
             renderUI();
         }
 
-        // --- Download Functionality ---
-        
-        // Download functionality removed
-
-        // --- Initialization ---
-
-        /** Initializes the app and loads saved state. */
-        function initializeApp() {
-            console.log('Initializing Catch 41 app...');
-            loadGameState();
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('flex');
+            document.getElementById(modalId).classList.remove('hidden');
         }
-        
-        // --- Event Listeners ---
-        window.onload = function() {
-            // Initialize leaderboard
-            renderLeaderboard();
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('flex');
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function showWelcomeModal() {
+            showModal('welcomeModal');
+            document.getElementById('app').classList.add('hidden');
+        }
+
+        function hideWelcomeModal() {
+            hideModal('welcomeModal');
+            document.getElementById('app').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Event Listeners and Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - Initializing game...');
             
-            // Autofill leaderboard score with final score when game completes
-            const observer = new MutationObserver(() => {
-                const completionModal = document.getElementById('completionModal');
-                if (completionModal && completionModal.classList.contains('flex')) {
-                    // Game complete, autofill score
-                    const finalScore = document.getElementById('finalScore');
-                    const lbScore = document.getElementById('lbScore');
-                    if (finalScore && lbScore && finalScore.textContent) {
-                        lbScore.value = finalScore.textContent;
+            // Initialize game
+            loadGameState();
+            showWelcomeModal();
+
+            // Welcome modal event listeners
+            document.querySelectorAll('input[name="gameMode"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    gameMode = parseInt(e.target.value);
+                    const p2 = document.getElementById('player2NameWrapper');
+                    if (gameMode === 2) {
+                        p2.classList.remove('hidden');
+                    } else {
+                        p2.classList.add('hidden');
                     }
+                });
+            });
+
+            document.getElementById('startGameBtn').addEventListener('click', () => {
+                const name = document.getElementById('playerNameInput').value.trim() || 'Guest';
+                const name2 = gameMode === 2 ? (document.getElementById('player2NameInput').value.trim() || 'Guest 2') : null;
+                
+                playerName = name;
+                player2Name = name2;
+                
+                // Ensure currentPlayer is reset for the selected game mode
+                currentPlayer = 1;
+                
+                console.log('Game started with player:', playerName, 'mode:', gameMode);
+                
+                hideWelcomeModal();
+                loadGameState();
+                renderUI();
+                console.log('Game UI rendered, buttons should be interactive now');
+            });
+
+            // View Leaderboard from Welcome Screen
+            document.getElementById('viewLeaderboardBtn').addEventListener('click', async () => {
+                const leaderboardModal = document.getElementById('leaderboardModal');
+                const welcomeLeaderboardContent = document.getElementById('welcomeLeaderboardContent');
+                
+                leaderboardModal.classList.remove('hidden');
+                welcomeLeaderboardContent.innerHTML = '<p class="text-gray-600 font-semibold">Loading leaderboard...</p>';
+                
+                try {
+                    const data = await fetchLeaderboard();
+                    if (data && data.length > 0) {
+                        let leaderboardHTML = '<div class="grid grid-cols-1 gap-3">';
+                        data.forEach((score, index) => {
+                            leaderboardHTML += `
+                                <div class="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-white shadow-sm hover:shadow-md transition">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl font-black w-8">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}</span>
+                                        <div class="text-left">
+                                            <p class="font-bold text-gray-900">${score.username}</p>
+                                            <p class="text-xs text-gray-500">${new Date(score.created_at).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                    <p class="font-bold text-xl text-indigo-600">${score.score}</p>
+                                </div>
+                            `;
+                        });
+                        leaderboardHTML += '</div>';
+                        welcomeLeaderboardContent.innerHTML = leaderboardHTML;
+                    } else {
+                        welcomeLeaderboardContent.innerHTML = '<p class="text-gray-600 font-semibold">No scores yet. Be the first!</p>';
+                    }
+                } catch (e) {
+                    console.error('Error loading leaderboard:', e);
+                    welcomeLeaderboardContent.innerHTML = '<p class="text-red-500 font-bold">Failed to load leaderboard. Please try again.</p>';
                 }
             });
-            const completionModal = document.getElementById('completionModal');
-            if (completionModal) {
-                observer.observe(completionModal, { attributes: true, attributeFilter: ['class'] });
-            }
+
+            // Close Leaderboard Modal Buttons
+            document.getElementById('closeLeaderboardBtn').addEventListener('click', () => {
+                document.getElementById('leaderboardModal').classList.add('hidden');
+            });
+
+            document.getElementById('backToWelcomeBtn').addEventListener('click', () => {
+                document.getElementById('leaderboardModal').classList.add('hidden');
+            });
+
+            // Game button event listeners with event delegation
+            document.addEventListener('click', (e) => {
+                const button = e.target.closest('[data-darts]');
+                if (button && !document.getElementById('welcomeModal').classList.contains('hidden')) {
+                    console.log('Button clicked but welcome modal is showing, ignoring click');
+                    return;
+                }
+                if (button) {
+                    const darts = parseInt(button.getAttribute('data-darts'));
+                    console.log('Button clicked with darts:', darts);
+                    recordFinish(darts);
+                }
+            });
+
+            document.getElementById('undoButton').addEventListener('click', undoLastScore);
             
-                                                // Return to Main Menu Button Logic
-                                                const returnToMenuButton = document.getElementById('returnToMenuButton');
-                                                const returnToMenuModal = document.getElementById('returnToMenuModal');
-                                                const confirmReturnToMenuBtn = document.getElementById('confirmReturnToMenuBtn');
-                                                const cancelReturnToMenuBtn = document.getElementById('cancelReturnToMenuBtn');
-                                                const returnToMenuBtnEl = document.getElementById('returnToMenuButton');
+            document.getElementById('resetGameButton').addEventListener('click', () => {
+                showModal('confirmResetModal');
+            });
 
-            if (returnToMenuBtnEl) {
-                returnToMenuBtnEl.addEventListener('click', () => {
-                    if (returnToMenuModal) {
-                        returnToMenuModal.classList.remove('hidden');
-                        returnToMenuModal.classList.add('flex');
-                    } else console.warn('returnToMenuModal not found');
-                });
-            } else console.warn('returnToMenuButton not found');
-            if (cancelReturnToMenuBtn) {
-                cancelReturnToMenuBtn.addEventListener('click', () => {
-                    if (returnToMenuModal) {
-                        returnToMenuModal.classList.add('hidden');
-                        returnToMenuModal.classList.remove('flex');
-                    }
-                });
-            } else console.warn('cancelReturnToMenuBtn not found');
-            if (confirmReturnToMenuBtn) {
-                confirmReturnToMenuBtn.addEventListener('click', () => {
-                    console.log('Confirm return to menu clicked');
-                                                    // Reset game state and show main menu modal
-                                                    if (window.gameState) {
-                                                        window.gameState.currentOut = 61;
-                                                        window.gameState.totalScore = 0;
-                                                        window.gameState.outsCompleted = 0;
-                                                        window.gameState.totalDartsThrown = 0;
-                                                        window.gameState.outsData = {};
-                                                        window.gameState.previousState = null;
-                                                        window.gameState.activeTab = 'game';
-                                                        window.gameState.playerScores = [0, 0];
-                                                        window.gameState.playerOutsData = [{}, {}];
-                                                        window.gameState.playerProgress = [0, 0];
-                                                        window.gameState.activePlayer = 0;
-                                                        window.gameState.playerCurrentOuts = [61, 61];
-                                                    }
-                                                    if (typeof renderUI === 'function') renderUI();
-                                                    // Hide confirmation modal and show start prompt modal
-                                                    returnToMenuModal.classList.add('hidden');
-                                                    returnToMenuModal.classList.remove('flex');
-                                                    const startPromptModal = document.getElementById('startPromptModal');
-                                                    startPromptModal.classList.remove('hidden');
-                                                    startPromptModal.classList.add('flex');
-                                                });
-                                    // Leaderboard form handler
-                                    const _lbForm = document.getElementById('leaderboardForm');
-                                    if (_lbForm) _lbForm.addEventListener('submit', async (e) => {
-                                        e.preventDefault();
-                                        const name = document.getElementById('lbName').value.trim();
-                                        const score = document.getElementById('lbScore').value;
-                                        const errorDiv = document.getElementById('lbError');
-                                        if (errorDiv) errorDiv.textContent = '';
-                                        // Prevent leaderboard submission if playing as guest
-                                        if (window.playAsGuest === true || (window.CGC_CATCH41_PLAYERS && window.CGC_CATCH41_PLAYERS.every(p => p.name === 'Guest'))) {
-                                            if (errorDiv) errorDiv.textContent = 'Guest scores are not added to the leaderboard.';
-                                            return;
-                                        }
-                                        if (!name || !score) {
-                                            if (errorDiv) errorDiv.textContent = 'Name and score required.';
-                                            return;
-                                        }
-                                        try {
-                                            await submitScore(name, score);
-                                            const lbName = document.getElementById('lbName');
-                                            const lbScore = document.getElementById('lbScore');
-                                            if (lbName) lbName.value = '';
-                                            if (lbScore) lbScore.value = '';
-                                            renderLeaderboard();
-                                        } catch {
-                                            if (errorDiv) errorDiv.textContent = 'Failed to submit score.';
-                                        }
-                                    });
-                        // Show start prompt modal on load
-                        const startPromptModal = document.getElementById('startPromptModal');
-                        startPromptModal.classList.remove('hidden');
-                        startPromptModal.classList.add('flex');
-
-                        // Modal logic
-                        let selectedMode = 1;
-                        const mode1Btn = document.getElementById('mode1Btn');
-                        const mode2Btn = document.getElementById('mode2Btn');
-                        const player1InputWrap = document.getElementById('player1InputWrap');
-                        const player2InputWrap = document.getElementById('player2InputWrap');
-                        const player1NameInput = document.getElementById('player1NameInput');
-                        const player2NameInput = document.getElementById('player2NameInput');
-                        const player1GuestBtn = document.getElementById('player1GuestBtn');
-                        const player2GuestBtn = document.getElementById('player2GuestBtn');
-                        const startGameBtn = document.getElementById('startGameBtn');
-
-                        // Make Guest the default selection in the name input
-                        try {
-                            if (player1NameInput && (!player1NameInput.value || player1NameInput.value.trim() === '')) {
-                                player1NameInput.value = 'Guest';
-                                window.playAsGuest = true;
-                            }
-                        } catch (e) {
-                            console.warn('Could not set default guest name:', e);
-                        }
-
-                        function updateModeUI() {
-                            if (selectedMode === 1) {
-                                mode1Btn.classList.add('from-indigo-600', 'to-purple-700');
-                                mode2Btn.classList.remove('from-emerald-600', 'to-green-700');
-                                player2InputWrap.classList.add('hidden');
-                            } else {
-                                mode1Btn.classList.remove('from-indigo-600', 'to-purple-700');
-                                mode2Btn.classList.add('from-emerald-600', 'to-green-700');
-                                player2InputWrap.classList.remove('hidden');
-                            }
-                        }
-                        // Guarded mode and guest button listeners
-                        if (mode1Btn) {
-                            mode1Btn.addEventListener('click', () => { selectedMode = 1; updateModeUI(); });
-                        } else console.warn('mode1Btn not found');
-                        if (mode2Btn) {
-                            mode2Btn.addEventListener('click', () => { selectedMode = 2; updateModeUI(); });
-                        } else console.warn('mode2Btn not found');
-                        if (player1GuestBtn) {
-                            player1GuestBtn.addEventListener('click', () => { 
-                                if (player1NameInput) player1NameInput.value = 'Guest';
-                                window.playAsGuest = true;
-                            });
-                        } else console.warn('player1GuestBtn not found');
-                        if (player2GuestBtn) {
-                            player2GuestBtn.addEventListener('click', () => { 
-                                if (player2NameInput) player2NameInput.value = 'Guest';
-                                // mark guest for player2 only when used
-                                // we don't set global playAsGuest here — the start handler will decide
-                            });
-                        } else console.warn('player2GuestBtn not found');
-
-                        // Clear playAsGuest when user types a custom name
-                        if (player1NameInput) player1NameInput.addEventListener('input', () => {
-                            window.playAsGuest = (player1NameInput.value && player1NameInput.value.trim() === 'Guest');
-                        });
-                        if (player2NameInput) player2NameInput.addEventListener('input', () => {
-                            // no global action here; handled at start
-                        });
-
-                        if (startGameBtn) {
-                            startGameBtn.addEventListener('click', () => {
-                            // Validate names
-                            const p1 = player1NameInput.value.trim();
-                            const p2 = player2NameInput.value.trim();
-                            if (!p1 || (selectedMode === 2 && !p2)) {
-                                alert('Please enter name(s) or select Guest.');
-                                return;
-                            }
-                            // Mark guest flag if any provided name is 'Guest'
-                            try {
-                                if (selectedMode === 1) {
-                                    window.playAsGuest = (p1 === 'Guest');
-                                } else {
-                                    window.playAsGuest = (p1 === 'Guest' || p2 === 'Guest');
-                                }
-                            } catch (e) {
-                                window.playAsGuest = false;
-                            }
-                            // Store player info for game logic (to be used in next steps)
-                            window.CGC_CATCH41_PLAYERS = selectedMode === 1 ? [{ name: p1 }] : [{ name: p1 }, { name: p2 }];
-                            window.CGC_CATCH41_MODE = selectedMode;
-                            if (window.gameState) {
-                                if (selectedMode === 2) {
-                                    window.gameState.currentOut = 61;
-                                    window.gameState.totalScore = 0;
-                                    window.gameState.outsCompleted = 0;
-                                    window.gameState.totalDartsThrown = 0;
-                                    window.gameState.outsData = {};
-                                    window.gameState.playerScores = [0, 0];
-                                    window.gameState.playerOutsData = [{}, {}];
-                                    window.gameState.playerProgress = [0, 0];
-                                    window.gameState.activePlayer = 0;
-                                    window.gameState.playerCurrentOuts = [61, 61];
-                                } else {
-                                    window.gameState.currentOut = 61;
-                                    window.gameState.totalScore = 0;
-                                    window.gameState.outsCompleted = 0;
-                                    window.gameState.totalDartsThrown = 0;
-                                    window.gameState.outsData = {};
-                                    window.gameState.playerScores = [0, 0];
-                                    window.gameState.playerOutsData = [{}, {}];
-                                    window.gameState.playerProgress = [0, 0];
-                                    window.gameState.activePlayer = 0;
-                                    window.gameState.playerCurrentOuts = [61, 61];
-                                }
-                            }
-                            startPromptModal.classList.add('hidden');
-                            startPromptModal.classList.remove('flex');
-                            if (typeof renderUI === 'function') renderUI();
-                        });
-                        } else console.warn('startGameBtn not found');
-                        // Default UI
-                        updateModeUI();
-            // Download button and listener removed
-            
-            // 2. Completion Modal Reset Button Listener (Direct Reset)
-            const _completionResetBtn = document.getElementById('completionModalResetButton');
-            if (_completionResetBtn) _completionResetBtn.addEventListener('click', resetSession);
-            
-            // 3. In-Game Reset Button Listener (Opens Confirmation Modal)
-            const _resetGameBtn = document.getElementById('resetGameButton');
-            if (_resetGameBtn) _resetGameBtn.addEventListener('click', showConfirmResetModal);
-
-            // 4. New Confirmation Modal Button Listeners
-            const _confirmResetConfirmButton = document.getElementById('confirmResetConfirmButton');
-            if (_confirmResetConfirmButton) _confirmResetConfirmButton.addEventListener('click', () => {
-                hideConfirmResetModal();
+            document.getElementById('confirmResetConfirmButton').addEventListener('click', () => {
+                hideModal('confirmResetModal');
                 resetSession();
             });
-            const _confirmResetCancelButton = document.getElementById('confirmResetCancelButton');
-            if (_confirmResetCancelButton) _confirmResetCancelButton.addEventListener('click', hideConfirmResetModal);
 
-            // 5. Undo Button Listener
-            const _undoBtn = document.getElementById('undoButton');
-            if (_undoBtn) _undoBtn.addEventListener('click', undoLastScore);
+            document.getElementById('confirmResetCancelButton').addEventListener('click', () => {
+                hideModal('confirmResetModal');
+            });
+
+            // Return to Main Menu button
+            document.getElementById('returnToMainMenuBtn').addEventListener('click', () => {
+                showModal('confirmReturnModal');
+            });
+
+            document.getElementById('confirmReturnConfirmButton').addEventListener('click', () => {
+                hideModal('confirmReturnModal');
+                // Reset game state
+                resetSession();
+                // Hide the main app and show welcome modal
+                document.getElementById('app').classList.add('hidden');
+                document.getElementById('welcomeModal').classList.remove('hidden');
+                // Ensure body doesn't have overflow hidden
+                document.body.style.overflow = 'auto';
+            });
+
+            document.getElementById('confirmReturnCancelButton').addEventListener('click', () => {
+                hideModal('confirmReturnModal');
+            });
+
+            document.getElementById('completionModalResetButton').addEventListener('click', resetSession);
             
-            // 6. Combined 456 Button Logic (no dropdown)
-            // Button now just submits 4 darts
-            // Keyboard input for 5/6 still works
+            // Celebration modal close button
+            document.getElementById('celebrationCloseBtn').addEventListener('click', () => {
+                document.getElementById('celebrationModal').classList.add('hidden');
+                document.getElementById('celebrationModal').classList.remove('flex');
+            });
+
+            // Auto-submit function for scores
+
+            // Leaderboard event listeners - Automatic submission on completion
             
-            // 7. Hotkey (Keyboard Listener)
+            // Keyboard event listeners
             window.addEventListener('keydown', (e) => {
                 const key = e.key;
-                const isGameActive = gameState.activeTab === 'game' &&
+                const isGameActive = activeTab === 'game' &&
                                      !document.getElementById('completionModal').classList.contains('flex') &&
-                                     !document.getElementById('confirmResetModal').classList.contains('flex'); // Prevent input if modal is open
+                                     !document.getElementById('confirmResetModal').classList.contains('flex');
 
                 if (isGameActive) {
                     const allowedScoreKeys = ['0', '2', '3', '4', '5', '6']; 
@@ -1223,9 +1264,6 @@
                     if (allowedScoreKeys.includes(key)) {
                         e.preventDefault(); 
                         recordFinish(parseInt(key));
-                        if (typeof dropdown !== 'undefined' && dropdown && dropdown.classList) {
-                            dropdown.classList.add('hidden'); // Close dropdown on keyboard input
-                        }
                     } else if (key === 'Backspace') {
                         const undoButton = document.getElementById('undoButton');
                         if (!undoButton.disabled) {
@@ -1236,66 +1274,9 @@
                 }
             });
 
-            // 8. On-screen Button Listeners
-            const _dartsButtons = document.querySelectorAll('[data-darts]');
-            if (_dartsButtons && _dartsButtons.length) {
-                _dartsButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        const darts = parseInt(button.getAttribute('data-darts'));
-                        console.log('Button clicked, darts:', darts);
-                        recordFinish(darts);
-                        if (typeof dropdown !== 'undefined' && dropdown && dropdown.classList) {
-                            dropdown.classList.add('hidden'); // Close dropdown after selection
-                        }
-                    });
-                });
-            } else {
-                console.warn('No dart buttons found (data-darts)');
-            }
-            
-            // Initialize app after all DOM elements are set up
-            initializeApp();
-            
-            // Initial render
-            renderUI();
-        };
+            // Make switchTab global
+            window.switchTab = switchTab;
+        });
     </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
-
+</body>
+</html>
